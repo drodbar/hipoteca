@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 class ReusableForm(Form):
     cantidad = TextField('Cantidad:', validators=[validators.required()])
     plazo = TextField('Plazo:', validators=[validators.required()])
-    interes = TextField('Interés:', validators=[validators.required()])
+    interes = TextField('Interés (TAE):', validators=[validators.required()])
 
  
 @app.route("/", methods=['GET', 'POST'])
