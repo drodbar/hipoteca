@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "a" "b">
+<html>
+    <head>
+        <title>Calculador de hipotecas</title>
+    </head>
+    <body>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message[1] }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form action="" method="post">
+            {{ form.csrf }}
+ 
+            <div class="input text">
+                {{ form.cantidad.label }} {{ form.cantidad }}
+            </div>
+	    <div class="input text">
+                {{ form.plazo.label }} {{ form.plazo }}
+            </div>
+	    <div class="input text">
+                {{ form.interes.label }} {{ form.interes }}
+            </div>
+ 
+            <div class="input submit">
+                <input type="submit" value="Submit" />
+            </div>
+        </form>
+    </body>
+</html>
