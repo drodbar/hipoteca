@@ -30,10 +30,11 @@ def cuota():
         if form.validate():
             # Save the comment here.
             cuota = str(calc(cantidad, interes, plazo))
+            # time.sleep(10)
             flash('Tu cuota mensual es de ' + cuota + " €")
         else:
             flash('All the form fields are required. ')
- 
+
     return render_template('hipoteca.html', form=form)
 
 
@@ -51,7 +52,7 @@ def calc(prestado, tae, plazoA):
     while restante > 0:
         restante = prestado
         interes = 0
-        cuota += 0.5
+        cuota += 1
         interesList = []
         for _ in range(plazo):
             # FIXME esto seguro que puede ser más eficiente
@@ -64,6 +65,8 @@ def calc(prestado, tae, plazoA):
     return int(cuota)
 
 def histogram(interesList, cuota):
+    import matplotlib
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     counts = [x for x in range(len(interesList))]
@@ -83,6 +86,7 @@ def histogram(interesList, cuota):
     # plt.axis([40, 160, 0, 0.03])
     plt.grid(True)
     plt.savefig('static/imagen.png')
+
     # plt.show()
 
 

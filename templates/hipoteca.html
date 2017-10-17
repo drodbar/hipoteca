@@ -10,10 +10,11 @@
                         {% for message in messages %}
                             <li>{{ message[1] }}</li>
                         {% endfor %}
-                        <img src="/static/imagen.png" width=900 alt="histograma">
+
                     </ul>
                 {% endif %}
             {% endwith %}
+            <img src="/static/imagen.png" width=900 alt="_">
             <form action="" method="post">
                 {{ form.csrf }}
 
@@ -46,6 +47,7 @@
             <p><form action="/">
                 <input type="submit" value="<- Home" />
             </form><p>
+
 
             <!--<IMG src="imagen.png" WIDTH=178 HEIGHT=180 BORDER=2 ALT="histograma">-->
 
