@@ -3,32 +3,56 @@
     <head>
         <title>Calculador de hipotecas</title>
     </head>
-    <body>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message[1] }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <form action="" method="post">
-            {{ form.csrf }}
- 
-            <div class="input text">
-                {{ form.cantidad.label }} {{ form.cantidad }}
-            </div>
-	    <div class="input text">
-                {{ form.plazo.label }} {{ form.plazo }}
-            </div>
-	    <div class="input text">
-                {{ form.interes.label }} {{ form.interes }}
-            </div>
- 
-            <div class="input submit">
-                <input type="submit" value="Submit" />
-            </div>
-        </form>
-    </body>
+        <body>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message[1] }}</li>
+                        {% endfor %}
+                        <img src="/static/imagen.png" width=900 alt="histograma">
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <form action="" method="post">
+                {{ form.csrf }}
+
+                <!--{{ form.age.label }}:-->
+                <!--{{ form.age(min=0, max=500000, oninput="form.p()") }}-->
+                <!--<output name="ageOutputName" id="ageOutputId">{{ form.age.data }}</output>-->
+
+                <!--{ form.age.label }}:-->
+                <!--{{ form.age(min=0, max=500000, oninput="ageOutputId.value = form.age.value") }}-->
+                <!--<output name="ageOutputName" id="ageOutputId">{{ form.age.data }}</output>-->
+
+                <!--{{ form.age.label }}:-->
+                <!--{{ form.age(min=0, max=1000000, oninput="outputUpdate(value)") }}-->
+                <!--<output name="ageOName" id="ageOId">{{ form.age.data }}</output>-->
+
+                <div class="input text">
+                    {{ form.cantidad.label }} {{ form.cantidad }}
+                </div>
+                <div class="input text">
+                    {{ form.plazo.label }} {{ form.plazo }}
+                </div>
+                <div class="input text">
+                    {{ form.interes.label }} {{ form.interes }}
+                </div>
+
+                <div class="input submit">
+                    <input type="submit" value="Calcular" />
+                </div>
+            </form>
+            <p><form action="/">
+                <input type="submit" value="<- Home" />
+            </form><p>
+
+            <!--<IMG src="imagen.png" WIDTH=178 HEIGHT=180 BORDER=2 ALT="histograma">-->
+
+
+
+
+
+
+        </body>
 </html>
