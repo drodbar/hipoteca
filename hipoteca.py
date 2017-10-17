@@ -1,6 +1,8 @@
 from flask import Flask, render_template, flash, request
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from wtforms.fields.html5 import IntegerRangeField
+from io import BytesIO
+import base64
  
 # App config.
 DEBUG = True
@@ -21,21 +23,22 @@ def cuota():
     form = ReusableForm(request.form)
  
     print(form.errors)
+    imagen = None
     if request.method == 'POST':
         cantidad = int(request.form['cantidad'])
         plazo = int(request.form['plazo'])
         interes = float(request.form['interes'])
         # print(request.form['age'])
- 
+
         if form.validate():
             # Save the comment here.
-            cuota = str(calc(cantidad, interes, plazo))
+            cuota, imagen = calc(cantidad, interes, plazo)
             # time.sleep(10)
-            flash('Tu cuota mensual es de ' + cuota + " €")
+            flash('Tu cuota mensual es de ' + str(cuota) + " €")
         else:
             flash('All the form fields are required. ')
 
-    return render_template('hipoteca.html', form=form)
+    return render_template('hipoteca.html', form=form, imagen=imagen)
 
 
 def calc(prestado, tae, plazoA):
@@ -61,8 +64,8 @@ def calc(prestado, tae, plazoA):
             interesList.append(interesM)
             restante -= (cuota - interesM)
     print(restante, interes, cuota)
-    histogram(interesList, cuota)
-    return int(cuota)
+
+    return int(cuota), histogram(interesList, cuota)
 
 def histogram(interesList, cuota):
     import matplotlib
@@ -85,7 +88,19 @@ def histogram(interesList, cuota):
     plt.text(60, 60, "Azul = Interés\nNaranja = amortización\nCuota mensual = " + str(cuota) + " €")
     # plt.axis([40, 160, 0, 0.03])
     plt.grid(True)
-    plt.savefig('static/imagen.png')
+    # En servidor:
+    # plt.savefig('/home/betados/mysite/imagen.png')
+    # en linux:
+    plt.savefig('home/betados/mysite/imagen.png')
+
+    ### Rendering Plot in Html
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+    figfile.seek(0)
+    figdata_png = base64.b64encode(figfile.getvalue())
+    result = str(figdata_png)[2:-1]
+    return result
+
 
     # plt.show()
 

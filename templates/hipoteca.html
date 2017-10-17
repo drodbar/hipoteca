@@ -14,7 +14,10 @@
                     </ul>
                 {% endif %}
             {% endwith %}
-            <img src="/static/imagen.png" width=900 alt="_">
+            {% if imagen != None %}
+            <img src="data:image/png;base64,{{ imagen }}" width="900">
+            {% endif %}
+            <!--<img src="/static/imagen.png" width=900 alt="_">-->
             <form action="" method="post">
                 {{ form.csrf }}
 
