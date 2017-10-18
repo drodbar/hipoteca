@@ -21,9 +21,9 @@ class ReusableForm(Form):
 @app.route("/cuota", methods=['GET', 'POST'])
 def cuota():
     form = ReusableForm(request.form)
- 
     print(form.errors)
     histogramImage = None
+    pieChartImage = None
     if request.method == 'POST':
         cantidad = int(request.form['cantidad'])
         plazo = int(request.form['plazo'])
@@ -31,8 +31,12 @@ def cuota():
 
         if form.validate():
             # Save the comment here.
-            cuota, histogramImage, pieChartImage = calc(cantidad, interes, plazo)
+            cuota, interes, histogramImage, pieChartImage = calc(cantidad, interes, plazo)
             flash('Tu cuota mensual es de ' + str(cuota) + " €")
+            porcent = "{0:.2f}".format((interes*100)/(cantidad+interes))
+            flash('Al final habrás pagado un total de intereses de '
+                  + str(int(interes)) + " €, un "
+                  + porcent + " % del total")
         else:
             flash('All the form fields are required. ')
 
@@ -40,16 +44,12 @@ def cuota():
 
 
 def calc(prestado, tae, plazoA):
-
     print(prestado, tae, plazoA)
-
     taeM = tae / 1200
     plazo = plazoA * 12
-
     restante = prestado
     interes = 0
     cuota = 0
-
     while restante > 0:
         restante = prestado
         interes = 0
@@ -62,25 +62,22 @@ def calc(prestado, tae, plazoA):
             interesList.append(interesM)
             restante -= (cuota - interesM)
     print(restante, interes, cuota)
-
-    return int(cuota), histogram(interesList, cuota), pieChart(prestado, interes)
+    return int(cuota), interes, histogram(interesList, cuota), pieChart(prestado, interes)
 
 
 def pieChart(cantidad, intereses):
+    import matplotlib
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-
     # Pie chart, where the slices will be ordered and plotted counter-clockwise:
     labels = 'Intereses', 'Amortización'
     total = cantidad + intereses
     sizes = [intereses/total, cantidad/total]
     explode = (0.1, 0)  # only "explode" the 2nd slice
-
     fig1, ax1 = plt.subplots()
     ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
             shadow=True, startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-
     ### Rendering Plot in Html
     plt.savefig('home/betados/mysite/pie.png')
     figfile = BytesIO()
@@ -94,7 +91,6 @@ def histogram(interesList, cuota):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-
     counts = [x for x in range(len(interesList))]
     counts = [counts, counts]
     amortizacion = [cuota - x for x in interesList]
@@ -102,7 +98,6 @@ def histogram(interesList, cuota):
     plt.figure(figsize=(10, 5))
     plt.hist(counts, bins=range(1, max(counts[0]) + 2), align='left', weights=lista, stacked=True)
     plt.xticks(range(1, max(counts[0]) + 1, 12))
-
     # the histogram of the data
     # n, bins, patches = plt.hist(x, 6, normed=1, facecolor='g', alpha=0.75)
     plt.xlabel('Cuota (mes)')
