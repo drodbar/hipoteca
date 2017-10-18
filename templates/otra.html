@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Rough AJAX Test</title>
+<script>
+    function loadXMLDoc()
+    {
+        var req = new XMLHttpRequest()
+        req.onreadystatechange = function()
+        {
+            if (req.readyState == 4)
+            {
+                if (req.status != 200)
+                {
+                    //error handling code here
+                }
+                else
+                {
+                    var response = JSON.parse(req.responseText)
+                    document.getElementById('myImg').innerHTML = response.username
+
+                }
+            }
+        }
+
+        req.open('POST', '/ajax')
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        var un = document.getElementById('myRange').value
+        var postVars = 'username='+un
+        req.send(postVars)
+
+
+        return false
+    }
+</script>
+</head>
+<body>
+<h1>Flask AJAX Test</h1>
+
+
+<div id="slidecontainer">
+  <input type="range" min="1" max="500000" value="90000" class="slider" id="myRange" onchange="return loadXMLDoc()">
+</div>
+<div id="myImg">
+</div>
+
+
+</body>
+</html>

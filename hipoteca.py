@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request
+from flask import Flask, render_template, flash, request, jsonify
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from wtforms.fields.html5 import IntegerRangeField
 from io import BytesIO
@@ -30,12 +30,11 @@ def cuota():
         interes = float(request.form['interes'])
 
         if form.validate():
-            # Save the comment here.
             cuota, interes, histogramImage, pieChartImage = calc(cantidad, interes, plazo)
             flash('Tu cuota mensual es de ' + str(cuota) + " €")
             porcent = "{0:.2f}".format((interes*100)/(cantidad+interes))
-            flash('Al final habrás pagado un total de intereses de '
-                  + str(int(interes)) + " €, un "
+            flash('Al final habrás pagado un total de '
+                  + str(int(interes)) + " € de intereses, un "
                   + porcent + " % del total")
         else:
             flash('All the form fields are required. ')
@@ -129,7 +128,18 @@ def home():
 
 @app.route("/otra")
 def otra():
-        return """otra cosa"""
+    pieChartImage = None
+    return render_template('otra.html', pieChart=pieChartImage)
+
+@app.route('/ajax', methods = ['POST'])
+def ajax_request():
+    username = request.form['username']
+    print(username)
+    pieChartImage = pieChart(156000, int(username))
+    # return render_template('otra.html', pieChart=pieChartImage)
+    # return jsonify(username=username)
+    # return jsonify(username='<img src="data:image/png;base64,'+pieChartImage+'" alt="pie"')
+    return jsonify(username='<div><img src="data:image/png;base64,'+pieChartImage+'" alt="pie"</div>')
 
 
 if __name__ == "__main__":
