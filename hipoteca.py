@@ -23,22 +23,20 @@ def cuota():
     form = ReusableForm(request.form)
  
     print(form.errors)
-    imagen = None
+    histogramImage = None
     if request.method == 'POST':
         cantidad = int(request.form['cantidad'])
         plazo = int(request.form['plazo'])
         interes = float(request.form['interes'])
-        # print(request.form['age'])
 
         if form.validate():
             # Save the comment here.
-            cuota, imagen = calc(cantidad, interes, plazo)
-            # time.sleep(10)
+            cuota, histogramImage, pieChartImage = calc(cantidad, interes, plazo)
             flash('Tu cuota mensual es de ' + str(cuota) + " €")
         else:
             flash('All the form fields are required. ')
 
-    return render_template('hipoteca.html', form=form, imagen=imagen)
+    return render_template('hipoteca.html', form=form, histogram=histogramImage, pieChart=pieChartImage)
 
 
 def calc(prestado, tae, plazoA):
@@ -65,7 +63,32 @@ def calc(prestado, tae, plazoA):
             restante -= (cuota - interesM)
     print(restante, interes, cuota)
 
-    return int(cuota), histogram(interesList, cuota)
+    return int(cuota), histogram(interesList, cuota), pieChart(prestado, interes)
+
+
+def pieChart(cantidad, intereses):
+    import matplotlib.pyplot as plt
+
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    labels = 'Intereses', 'Amortización'
+    total = cantidad + intereses
+    sizes = [intereses/total, cantidad/total]
+    explode = (0.1, 0)  # only "explode" the 2nd slice
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+
+    ### Rendering Plot in Html
+    plt.savefig('home/betados/mysite/pie.png')
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+    figfile.seek(0)
+    figdata_png = base64.b64encode(figfile.getvalue())
+    return str(figdata_png)[2:-1]
+
 
 def histogram(interesList, cuota):
     import matplotlib
@@ -85,24 +108,23 @@ def histogram(interesList, cuota):
     plt.xlabel('Cuota (mes)')
     plt.ylabel('Cantidad (€)')
     plt.title('Interés + amortización ')
-    plt.text(60, 60, "Azul = Interés\nNaranja = amortización\nCuota mensual = " + str(cuota) + " €")
+    # TODO mejorar la leyenda
+    plt.text(len(interesList)/2, cuota/2,
+             "Azul = Interés\nNaranja = Amortización\nCuota mensual = " + str(cuota) + " €",
+             fontsize=14)
     # plt.axis([40, 160, 0, 0.03])
     plt.grid(True)
+
+    ### Rendering Plot in Html
     # En servidor:
     # plt.savefig('/home/betados/mysite/imagen.png')
     # en linux:
-    plt.savefig('home/betados/mysite/imagen.png')
-
-    ### Rendering Plot in Html
+    plt.savefig('home/betados/mysite/histogram.png')
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
     figfile.seek(0)
     figdata_png = base64.b64encode(figfile.getvalue())
-    result = str(figdata_png)[2:-1]
-    return result
-
-
-    # plt.show()
+    return str(figdata_png)[2:-1]
 
 
 @app.route("/")

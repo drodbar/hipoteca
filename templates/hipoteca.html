@@ -14,8 +14,11 @@
                     </ul>
                 {% endif %}
             {% endwith %}
-            {% if imagen != None %}
-            <img src="data:image/png;base64,{{ imagen }}" width="900">
+            {% if histogram != None %}
+            <img src="data:image/png;base64,{{ histogram }}" width="900">
+            {% endif %}
+            {% if pieChart != None %}
+            <img src="data:image/png;base64,{{ pieChart }}" width="900">
             {% endif %}
             <!--<img src="/static/imagen.png" width=900 alt="_">-->
             <form action="" method="post">
@@ -51,13 +54,6 @@
                 <input type="submit" value="<- Home" />
             </form><p>
 
-
             <!--<IMG src="imagen.png" WIDTH=178 HEIGHT=180 BORDER=2 ALT="histograma">-->
-
-
-
-
-
-
         </body>
 </html>
