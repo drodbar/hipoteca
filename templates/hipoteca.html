@@ -3,47 +3,55 @@
     <head>
         <title>Calculador de hipotecas</title>
     </head>
-        <body>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul>
-                        {% for message in messages %}
-                            <li>{{ message[1] }}</li>
-                        {% endfor %}
 
-                    </ul>
-                {% endif %}
-            {% endwith %}
-            {% if histogram != None %}
-            <img src="data:image/png;base64,{{ histogram }}" width="900">
-            {% endif %}
-            {% if pieChart != None %}
-            <img src="data:image/png;base64,{{ pieChart }}" width="900">
-            {% endif %}
-            <!--<img src="/static/imagen.png" width=900 alt="_">-->
+    <script>
+    function loadXMLDoc()
+    {
+        var req = new XMLHttpRequest()
+        req.onreadystatechange = function()
+        {
+            if (req.readyState == 4)
+            {
+                if (req.status != 200)
+                {
+                    //error handling code here
+                }
+                else
+                {
+                    var response = JSON.parse(req.responseText)
+                    document.getElementById('pie').innerHTML = response.pie
+                    document.getElementById('histo').innerHTML = response.histo
+
+                }
+            }
+        }
+
+        req.open('POST', '/hipoAjax')
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        var un = document.getElementById('cantidadS').value
+        var postVars = 'cantidadS='+un
+        req.send(postVars)
+
+
+        return false
+    }
+    </script>
+
+        <body>
             <form action="" method="post">
                 {{ form.csrf }}
 
-                <!--{{ form.age.label }}:-->
-                <!--{{ form.age(min=0, max=500000, oninput="form.p()") }}-->
-                <!--<output name="ageOutputName" id="ageOutputId">{{ form.age.data }}</output>-->
-
-                <!--{ form.age.label }}:-->
-                <!--{{ form.age(min=0, max=500000, oninput="ageOutputId.value = form.age.value") }}-->
-                <!--<output name="ageOutputName" id="ageOutputId">{{ form.age.data }}</output>-->
-
-                <!--{{ form.age.label }}:-->
-                <!--{{ form.age(min=0, max=1000000, oninput="outputUpdate(value)") }}-->
-                <!--<output name="ageOName" id="ageOId">{{ form.age.data }}</output>-->
-
                 <div class="input text">
                     {{ form.cantidad.label }} {{ form.cantidad }}
-                    <!--{% if histogram != None %}-->
-                        <!--<input type="range" min="1" max="500000" value="90000" class="slider" id="myRange" onchange="return loadXMLDoc()">-->
-                    <!--{% endif %}-->
+                    {% if histogram != None %}
+                        <input type="range" min="1" max="500000" value="90000" class="slider" id="cantidadS" onchange="return loadXMLDoc()">
+                    {% endif %}
                 </div>
                 <div class="input text">
                     {{ form.plazo.label }} {{ form.plazo }}
+                    <!--{% if histogram != None %}-->
+                        <!--<input type="range" min="1" max="50" value="10" class="slider" id="plazo" onchange="return loadXMLDoc()">-->
+                    <!--{% endif %}-->
                 </div>
                 <div class="input text">
                     {{ form.interes.label }} {{ form.interes }}
@@ -56,7 +64,28 @@
             <p><form action="/">
                 <input type="submit" value="<- Home" />
             </form><p>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message[1] }}</li>
+                        {% endfor %}
 
-            <!--<IMG src="imagen.png" WIDTH=178 HEIGHT=180 BORDER=2 ALT="histograma">-->
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <div id="histo">
+                {% if histogram != None %}
+                <img src="data:image/png;base64,{{ histogram }}" width="900">
+                {% endif %}
+            </div>
+            <div id="pie">
+                {% if pieChart != None %}
+                <img src="data:image/png;base64,{{ pieChart }}" width="900">
+                {% endif %}
+            </div>
+            <!--<img src="/static/imagen.png" width=900 alt="_">-->
+
         </body>
 </html>
