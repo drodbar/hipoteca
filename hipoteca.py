@@ -51,7 +51,7 @@ class Hipoteca(object):
                 shadow=True, startangle=90)
         ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         ### Rendering Plot in Html
-        plt.savefig('home/betados/mysite/pie.png')
+        plt.savefig('site/pie.png')
         figfile = BytesIO()
         plt.savefig(figfile, format='png')
         figfile.seek(0)
@@ -83,9 +83,9 @@ class Hipoteca(object):
 
         ### Rendering Plot in Html
         # En servidor:
-        # plt.savefig('/home/betados/mysite/imagen.png')
+        # plt.savefig('/site/imagen.png')
         # en linux:
-        plt.savefig('home/betados/mysite/histogram.png')
+        plt.savefig('site/histogram.png')
         figfile = BytesIO()
         plt.savefig(figfile, format='png')
         figfile.seek(0)
